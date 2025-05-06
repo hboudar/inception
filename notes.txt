@@ -1,0 +1,38 @@
+// how image is built [V]
+// how image is run [V]
+// dockerfile
+// image layers + cashing
+// how to name them
+
+// container:
+// container is a running instance of an image [V]
+// how to run/access/stop/remove the container
+// how to name it
+// how to add networks + volumes + port mapping
+
+
+// how to create a network or volumes
+
+-------------------------------------
+
+docker      :   is a software platform that allows you to build, test, and deploy application quickly
+                using containers
+
+container   :   is a lightweitght, portable, and self-sufficient unit that packages an application
+                along with its dependencies, libraries, and runtime environment.
+
+docker engine : is the core technology behind building, shipping and running containerized applications.
+                (REST API, CLI, Daemon)
+            
+    *Docker Daemon : (runs in the backround) manages images, containers, network, etc...
+    *Docker CLI(docker) : the command-line tool used to talk with the Daemon
+    *Docker REST API : how the cli and other tools talk to the Daemon
+
+
+
+
+docker build .
+docker run -p -d
+docker stop
+docker attach 
+docker logs

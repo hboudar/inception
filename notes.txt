@@ -1,13 +1,13 @@
-// how image is built [V]
+// how to name them [V]
 // how image is run [V]
+// how image is built [V]
 // dockerfile
-// image layers + cashing
-// how to name them
+// image layers + cashing [V]
 
 // container:
+// how to name it [V]
 // container is a running instance of an image [V]
-// how to run/access/stop/remove the container
-// how to name it
+// how to run/access/stop/remove the container [V]
 // how to add networks + volumes + port mapping
 
 
@@ -28,11 +28,23 @@ docker engine : is the core technology behind building, shipping and running con
     *Docker CLI(docker) : the command-line tool used to talk with the Daemon
     *Docker REST API : how the cli and other tools talk to the Daemon
 
+image : are read-only
 
 
+docker ps -a(all)
+docker build -t(for naming) .
+docker run -p(publish port) -d(detach)  i(interactive) t(tty) --rm(auto removed after exit) --name(for naming)
+docker start -a(attach) -i(interactive)
+docker stop (id)
+docker rm (id)
+docker rmi (id)
+docker image  | managing images
+docker images | listing images
+docker cp
+docker push
+docker pull
+docker tag
 
-docker build .
-docker run -p -d
-docker stop
-docker attach 
+
+docker attach
 docker logs

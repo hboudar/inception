@@ -1,14 +1,14 @@
 // how to name them [V]
 // how image is run [V]
 // how image is built [V]
-// dockerfile
+// dockerfile [V]
 // image layers + cashing [V]
 
 // container:
 // how to name it [V]
 // container is a running instance of an image [V]
 // how to run/access/stop/remove the container [V]
-// how to add networks + volumes + port mapping
+// how to add networks + volumes [V] + port mapping
 
 
 // how to create a network or volumes

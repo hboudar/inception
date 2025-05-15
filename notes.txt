@@ -32,14 +32,22 @@ image : are read-only
 
 
 docker ps -a(all)
-docker build -t(for naming) .
-docker run -p(publish port) -d(detach)  i(interactive) t(tty) --rm(auto removed after exit) --name(for naming)
+docker images | listing images
+
+docker build -t(for naming) --build-arg name=value .
+docker run -p(publish port) [--env-file filename or --env name=value] -d(detach)  i(interactive) t(tty) --rm(auto removed after exit) --name(for naming) -v(bind-mount a volume | name:/path)
 docker start -a(attach) -i(interactive)
+
 docker stop (id)
 docker rm (id)
 docker rmi (id)
+docker volume rm (id)
+
 docker image  | managing images
-docker images | listing images
+docker volume | managing volumes
+
+
+
 docker cp
 docker push
 docker pull
@@ -47,4 +55,7 @@ docker tag
 
 
 docker attach
-docker logs
+docker logs (id) | Fetch the logs of a container
+
+
+instead of full path : $(pwd) | -v $(pwd):/app:ro | ro(read only)

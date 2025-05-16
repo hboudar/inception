@@ -46,7 +46,7 @@ docker volume rm (id)
 docker image  | managing images
 docker volume | managing volumes
 
-
+docker network
 
 docker cp
 docker push
@@ -59,3 +59,9 @@ docker logs (id) | Fetch the logs of a container
 
 
 instead of full path : $(pwd) | -v $(pwd):/app:ro | ro(read only)
+
+
+---------for networking-------
+1-request from container to www : done without any problem
+2-request from container to host machine : done but Use host.docker.internal as address
+3-request from container to other container : done but requires a container network

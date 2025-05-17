@@ -65,3 +65,4 @@ instead of full path : $(pwd) | -v $(pwd):/app:ro | ro(read only)
 1-request from container to www : done without any problem
 2-request from container to host machine : done but Use host.docker.internal as address
 3-request from container to other container : done but requires a container network
+---------------------------------

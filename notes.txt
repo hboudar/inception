@@ -1,3 +1,5 @@
+PID 1 / init process
+
 // how to name them [V]
 // how image is run [V]
 // how image is built [V]

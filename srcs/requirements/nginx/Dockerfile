@@ -1,4 +1,3 @@
-# Bullseye is the debian:11
 FROM debian:bullseye
 
 
@@ -15,8 +14,9 @@ RUN openssl req -x509 -nodes -days 365 \
     -subj "/C=FR/ST=Paris/L=Paris/O=42/OU=Inception/CN=localhost"
 
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY index.html /usr/share/nginx/html/index.html
 
-EXPOSE 443    
+EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]

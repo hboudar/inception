@@ -1,0 +1,50 @@
+services:
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+    container_name: mariadb-container
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wpnet
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+    container_name: wordpress
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - wpnet
+    expose:
+      - "9000"
+    depends_on:
+      - mariadb
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+    container_name: nginx
+    restart: unless-stopped
+    depends_on:
+      - wordpress
+    ports:
+      - "8443:443"
+    volumes:
+      - wordpress_data:/var/www/wordpress:ro
+    networks:
+      - wpnet
+
+volumes:
+  wordpress_data:
+  mariadb_data:
+
+networks:
+  wpnet:
+    driver: bridge

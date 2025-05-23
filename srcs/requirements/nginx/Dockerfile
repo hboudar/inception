@@ -15,7 +15,7 @@ RUN openssl req -x509 -nodes -days 365 \
 
 
 COPY conf/nginx.conf /etc/nginx/nginx.conf
-COPY index.html /usr/share/nginx/html/index.html
+# COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 443
 

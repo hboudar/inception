@@ -1,11 +1,15 @@
-# srcs/requirements/mariadb/Dockerfile
+FROM debian:bullseye
 
-FROM mariadb:10.11
+ENV DEBIAN_FRONTEND=noninteractive
 
-COPY ./tools/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY ./tools/init.sql.template /docker-entrypoint-initdb.d/init.sql.template
+RUN apt-get update && apt-get install -y mariadb-server mariadb-client && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Setup data dir permissions and expose default port
+VOLUME /var/lib/mysql
+EXPOSE 3306
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["mysqld"]
+COPY ./my.cnf /etc/mysql/my.cnf
+
+CMD ["mysqld_safe"]
+

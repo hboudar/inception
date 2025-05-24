@@ -1,60 +1,24 @@
 #!/bin/bash
-set -e
 
-echo "Waiting for database to be ready..."
-until nc -z "$WORDPRESS_DB_HOST" 3306; do
-  sleep 2
-done
+cd /var/www/html
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp
 
-WP_DIR="/var/www/wordpress"
+wp core download --allow-root
+wp config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --dbhost=$DB_HOST --allow-root
+wp core install --url=$DOMAIN --title=$TITLE --admin_user=$ADMIN_USER --admin_password=$ADMIN_PASS --admin_email=$ADMIN_EMAIL --allow-root
+wp user create $USER_NAME $USER_EMAIL --role=author --user_pass=$USER_PASS --allow-root
 
-cd "$WP_DIR"
+wp plugin install redis-cache --allow-root
+wp plugin activate redis-cache --allow-root
 
-if [ ! -f wp-config.php ]; then
-  wp config create \
-    --dbname="$WORDPRESS_DB_NAME" \
-    --dbuser="$WORDPRESS_DB_USER" \
-    --dbpass="$WORDPRESS_DB_PASSWORD" \
-    --dbhost="$WORDPRESS_DB_HOST" \
-    --path="$WP_DIR" \
-    --allow-root
-fi
+wp config set WP_REDIS_HOST 'redis' --allow-root
+wp config set WP_CACHE 'true' --allow-root
+wp config set FS_METHOD 'direct' --allow-root
+wp config set WP_REDIS_PORT '6379' --allow-root
+wp redis enable --allow-root
 
-if ! wp core is-installed --allow-root; then
-  wp core install \
-    --url="https://localhost" \
-    --title="42 Inception" \
-    --admin_user="$ADMIN_NAME" \
-    --admin_password="$ADMIN_PASSWORD" \
-    --admin_email="admin@example.com" \
-    --path="$WP_DIR" \
-    --allow-root
-  echo "✅ WordPress core installed."
-fi
+chmod -R 777 /var/www/html/
 
-if ! wp user get "$USER_NAME" --allow-root > /dev/null 2>&1; then
-  wp user create "$USER_NAME" "$USER_NAME@example.com" \
-    --role=editor \
-    --user_pass="$USER_PASSWORD" \
-    --display_name="$USER_NAME" \
-    --allow-root
-  echo "✅ Editor user '$USER_NAME' created."
-fi
-
-if ! wp plugin is-installed redis-cache --allow-root; then
-  wp plugin install redis-cache --activate --allow-root
-  wp config set WP_REDIS_HOST 'redis' --allow-root
-  wp config set WP_REDIS_PORT '6379' --allow-root
-  wp config set WP_CACHE true --raw --allow-root
-  wp config set FS_METHOD 'direct' --allow-root
-  wp redis enable --allow-root
-  echo "✅ Redis cache configured."
-fi
-
-chown -R www-data:www-data "$WP_DIR"
-chmod -R 755 "$WP_DIR"
-
-mkdir -p /run/php
-echo "✅ Environment ready. Starting PHP-FPM..."
-
-exec php-fpm7.4 -F
+php-fpm7.4 -F

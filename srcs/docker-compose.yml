@@ -1,50 +1,67 @@
 services:
-  mariadb:
-    build:
-      context: ./requirements/mariadb
-    container_name: mariadb-container
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - wpnet
-
-  wordpress:
-    build:
-      context: ./requirements/wordpress
-    container_name: wordpress
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - wordpress_data:/var/www/wordpress
-    networks:
-      - wpnet
-    expose:
-      - "9000"
-    depends_on:
-      - mariadb
-
   nginx:
-    build:
-      context: ./requirements/nginx
+    build: requirements/nginx
+    image: nginx:inception
     container_name: nginx
-    restart: unless-stopped
-    depends_on:
-      - wordpress
     ports:
       - "8443:443"
     volumes:
-      - wordpress_data:/var/www/wordpress:ro
+      - wordpress_data:/var/www/html
     networks:
-      - wpnet
+      - hb-net
+    depends_on:
+      - wordpress
+    restart: unless-stopped
+
+  mariadb:
+    build: requirements/mariadb
+    image: mariadb:inception
+    container_name: mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - ROOT_PASS=${ROOT_PASS}
+    networks:
+      - hb-net
+    restart: unless-stopped
+
+  wordpress:
+    build: requirements/wordpress
+    image: wordpress:inception
+    container_name: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_HOST=${DB_HOST}
+      - DOMAIN=${DOMAIN}
+
+    networks:
+      - hb-net
+    depends_on:
+      - mariadb
+    restart: unless-stopped
 
 volumes:
   wordpress_data:
+    name: wordpress_data
+    driver_opts:
+      type: bind
+      o: bind
+      device: /home/hboudar/data/wordpress
   mariadb_data:
+    name: mariadb_data
+    driver_opts:
+      type: bind
+      o: bind
+      device: /home/hboudar/data/mariadb
 
 networks:
-  wpnet:
+  hb-net:
     driver: bridge

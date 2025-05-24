@@ -1,41 +1,20 @@
 FROM debian:bullseye
 
-# Install PHP, extensions, and utilities
-RUN apt-get update && apt-get install -y \
-    php php-fpm php-mysql php-gd php-curl php-xml php-mbstring php-zip \
-    curl unzip wget less procps vim \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configure PHP-FPM to listen on port 9000 (instead of UNIX socket)
-RUN sed -i 's|listen = .*|listen = 9000|' /etc/php/*/fpm/pool.d/www.conf && \
-    sed -i 's|;listen.owner = .*|listen.owner = www-data|' /etc/php/*/fpm/pool.d/www.conf && \
-    sed -i 's|;listen.group = .*|listen.group = www-data|' /etc/php/*/fpm/pool.d/www.conf
+RUN apt-get update && \
+    apt-get install -y php7.4-fpm php7.4-mysql php7.4-gd php7.4-xml php7.4-mbstring \
+    curl unzip wget && \
+    apt-get clean
 
-# Create WordPress root
-RUN mkdir -p /var/www/wordpress
+RUN sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
 
-# Download and extract latest WordPress
-WORKDIR /tmp
+RUN mkdir -p /var/www/html
+RUN chmod -R 777 /var/www/html/
+RUN mkdir -p /run/php
 
-RUN curl -O https://wordpress.org/latest.tar.gz && \
-    tar -xzf latest.tar.gz && \
-    mv wordpress/* /var/www/wordpress && \
-    rm -rf wordpress latest.tar.gz
-
-# Set correct ownership and permissions
-RUN chown -R www-data:www-data /var/www/wordpress && \
-    chmod -R 755 /var/www/wordpress
-
-# Install WP-CLI
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
-
-# Add init script
-COPY tools/init-wordpress.sh /init-wordpress.sh
-RUN chmod +x /init-wordpress.sh
-
-WORKDIR /var/www/wordpress
+COPY tools/init-wordpress.sh .
+RUN chmod +x init-wordpress.sh
 
 EXPOSE 9000
 
-CMD ["/init-wordpress.sh"]
+CMD ["./init-wordpress.sh"]

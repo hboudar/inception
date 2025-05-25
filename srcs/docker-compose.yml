@@ -3,20 +3,23 @@ services:
     build: requirements/nginx
     image: nginx:inception
     container_name: nginx
+    restart: unless-stopped
     ports:
       - "8443:443"
+    networks:
+      - my-net
     volumes:
       - wordpress_data:/var/www/html
-    networks:
-      - hb-net
     depends_on:
       - wordpress
-    restart: unless-stopped
 
   mariadb:
     build: requirements/mariadb
     image: mariadb:inception
     container_name: mariadb
+    restart: unless-stopped
+    networks:
+      - my-net
     volumes:
       - mariadb_data:/var/lib/mysql
     environment:
@@ -25,14 +28,14 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_HOST=${DB_HOST}
       - ROOT_PASS=${ROOT_PASS}
-    networks:
-      - hb-net
-    restart: unless-stopped
 
   wordpress:
     build: requirements/wordpress
     image: wordpress:inception
-    container_name: wordpress
+    container_name: wp-php
+    restart: unless-stopped
+    networks:
+      - my-net
     volumes:
       - wordpress_data:/var/www/html
     environment:
@@ -40,13 +43,13 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
       - DB_HOST=${DB_HOST}
-      - DOMAIN=${DOMAIN}
-
-    networks:
-      - hb-net
+      - ADMIN_PASS=${ADMIN_PASS}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - USER_NAME=${USER_NAME}
+      - USER_PASS=${USER_PASS}
+      - USER_EMAIL=${USER_EMAIL}
     depends_on:
       - mariadb
-    restart: unless-stopped
 
 volumes:
   wordpress_data:
@@ -63,5 +66,5 @@ volumes:
       device: /home/hboudar/data/mariadb
 
 networks:
-  hb-net:
+  my-net:
     driver: bridge

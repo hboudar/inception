@@ -1,4 +1,5 @@
 # SET-UP
+
 * FROM debian:bullseye : for all images(must).
 • Each Docker image = its corresponding service.
 • All CONTAINERS have to restart in case of a crash..

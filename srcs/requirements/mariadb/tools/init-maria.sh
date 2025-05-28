@@ -5,7 +5,7 @@ mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql' &
 
 # Wait for MariaDB to be ready
 until mysqladmin ping --silent; do
-  echo "Waiting for MariaDB to start..."
+  echo "Waiting for MariaDB to start [M]..."
   sleep 1
 done
 

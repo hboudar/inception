@@ -1,29 +1,23 @@
+WORDPRESS_DIR = /home/hboudar/data/wordpress
+MARIADB_DIR = /home/hboudar/data/mariadb
+
+# Default target to build and start containers
+working_dir:
+	@docker run --rm -v $(MARIADB_DIR):/trash1 -v $(WORDPRESS_DIR):/trash2 \
+		alpine sh -c "rm -rf trash1/* trash2/*"
+
 # Build and start containers
 up:
 	cd srcs/ && docker compose up --build -d
-
-# Stop and remove containers
-down:
-	cd srcs/ && docker compose down --remove-orphans
-
-# Restart containers
-re: down up
 
 # Show running containers
 ps:
 	@cd srcs/ && docker compose ps
 
-WORDPRESS_DIR = /home/alaalalm/data/wordpress
-MARIADB_DIR = /home/alaalalm/data/mariadb
-
-# Target to remove the bind mounts
-remove_bind_mounts:
-	@echo "Bind mounts removed"
-	@rm -rf $(WORDPRESS_DIR)/*
-	@rm -rf $(MARIADB_DIR)/*
-
 # Remove all containers, networks, and volumes
-clean: down
-	@cd srcs/ && docker compose down -v
-	@make remove_bind_mounts
+clean:
+	@cd srcs/ && docker compose down -v --remove-orphans
 	@docker rmi -f $(shell docker images -q)
+
+# Restart containers
+re: down working_dir up

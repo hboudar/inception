@@ -48,3 +48,5 @@
   /•Certificates serve two fundamental purposes:
   - Authentication: They prove the server's identity to the client
   - Encryption: They enable the establishment of a secure, encrypted session (TLS handshake)/
+
+https://localhost:8443/

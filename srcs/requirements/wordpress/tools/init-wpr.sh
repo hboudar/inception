@@ -18,6 +18,10 @@ fi
 
 # Download WordPress core (skip if already downloaded)
 if [ ! -f wp-config.php ]; then
+  DB_PASS=$(cat /run/secrets/db_pass)
+  ADMIN_PASS=$(cat /run/secrets/admin_pass)
+  USER_PASS=$(cat /run/secrets/user_pass)
+  
   wp core download --allow-root
   wp config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost="$DB_HOST" --allow-root
   wp core install --url="$DOMAIN" --title="$TITLE" --admin_user="$ADMIN_USER" --admin_password="$ADMIN_PASS" --admin_email="$ADMIN_EMAIL" --allow-root

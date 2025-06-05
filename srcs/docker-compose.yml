@@ -5,7 +5,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "443:443"
+      - "8443:8443"
     networks:
       - my-net
     volumes:
@@ -25,9 +25,10 @@ services:
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
       - DB_HOST=${DB_HOST}
-      - ROOT_PASS=${ROOT_PASS}
+    secrets:
+      - db_pass
+      - root_pass
 
   wordpress:
     build: requirements/wordpress
@@ -41,13 +42,17 @@ services:
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
       - DB_HOST=${DB_HOST}
-      - ADMIN_PASS=${ADMIN_PASS}
+      - DOMAIN=${DOMAIN}
+      - TITLE=${TITLE}
+      - ADMIN_USER=${ADMIN_USER}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - USER_NAME=${USER_NAME}
-      - USER_PASS=${USER_PASS}
       - USER_EMAIL=${USER_EMAIL}
+    secrets:
+      - db_pass
+      - admin_pass
+      - user_pass
     depends_on:
       - mariadb
 
@@ -68,3 +73,13 @@ volumes:
 networks:
   my-net:
     driver: bridge
+
+secrets:
+  db_pass:
+    file: ./../secrets/db_pass.txt
+  admin_pass:
+    file: ./../secrets/admin_pass.txt
+  user_pass:
+    file: ./../secrets/user_pass.txt
+  root_pass:
+    file: ./../secrets/root_pass.txt

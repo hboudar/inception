@@ -1,23 +1,27 @@
 #!/bin/bash
+set -euo pipefail
 
-# Start mysqld_safe in the background
+# Start MariaDB in background
 mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql' &
 
-# Wait for MariaDB to be ready
-until mysqladmin ping --silent; do
-  echo "Waiting for MariaDB to start [M]..."
-  sleep 1
+# Wait for server to be ready
+until mysqladmin ping --silent --connect-timeout=2; do
+  echo "[INFO] Waiting for MariaDB to start..."
+  sleep 1.5
 done
 
-# Initialize DB and users
+# Read secrets
 DB_PASS=$(cat /run/secrets/db_pass)
 ROOT_PASS=$(cat /run/secrets/root_pass)
 
-mysql -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
-mysql -e "CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';"
-mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER';"
-mysql -e "FLUSH PRIVILEGES;"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';"
+# Initialization
+mysql <<-EOSQL
+  CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;
+  CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';
+  GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
+  FLUSH PRIVILEGES;
+  ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';
+EOSQL
 
-# Keep the container running with mysqld_safe in foreground
+# Keep container alive
 wait

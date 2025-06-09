@@ -5,7 +5,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "8443:8443"
+      - "8443:443"
     networks:
       - my-net
     volumes:
@@ -33,7 +33,7 @@ services:
   wordpress:
     build: requirements/wordpress
     image: wordpress:inception
-    container_name: wp-php
+    container_name: wordpress
     restart: unless-stopped
     networks:
       - my-net

@@ -6,7 +6,7 @@ working_dir:
 		alpine sh -c "rm -rf trash1/* trash2/*" && \
 		mkdir -p $(WORDPRESS_DIR) $(MARIADB_DIR)
 
-up: working_dir
+up:
 	@cd srcs/ && docker compose up --build -d
 
 down:

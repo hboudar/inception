@@ -26,6 +26,11 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_HOST=${DB_HOST}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     secrets:
       - db_pass
       - root_pass
@@ -49,16 +54,20 @@ services:
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - USER_NAME=${USER_NAME}
       - USER_EMAIL=${USER_EMAIL}
+      - REDIS_HOST=${REDIS_HOST}
     secrets:
       - db_pass
       - admin_pass
       - user_pass
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   # bonus part
   adminer:
-    build: requirements/adminer
+    build: requirements/bonus/adminer
     image: adminer:inception
     container_name: adminer
     restart: unless-stopped
@@ -66,7 +75,49 @@ services:
       - my-net
     ports:
       - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
+  redis:
+    build: ./requirements/bonus/Redis
+    container_name: redis
+    restart: always
+    expose:
+      - "6379"
+    networks:
+      - my-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  ftp:
+    build: requirements/bonus/FTP
+    image: ftp:inception
+    container_name: ftp
+    restart: unless-stopped
+    networks:
+      - my-net
+    ports:
+      - "2121:2121"
+      - "30000-30100:30000-30100"
+    volumes:
+      - wordpress_data:/var/www/html
+    environment:
+      - FTP_USER=${FTP_USER}
+    secrets:
+      - ftp_pass
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo quit | nc -w 2 localhost 2121 | grep '220'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 
 
@@ -97,3 +148,5 @@ secrets:
     file: ./../secrets/user_pass.txt
   root_pass:
     file: ./../secrets/root_pass.txt
+  ftp_pass:
+    file: ./../secrets/ftp_pass.txt

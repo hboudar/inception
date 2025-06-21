@@ -31,11 +31,11 @@ if [ ! -f "$INIT_FLAG" ]; then
 EOSQL
 
   # Set root password (may fail if already set, warn only)
-  if mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';"; then
-    echo "[INFO] Root password set."
-  else
-    echo "[WARN] Failed to reset root password. It may already be set."
+  if ! mysql -uroot -e "SELECT 1;" >/dev/null 2>&1; then
+    echo "[INFO] Attempting root password setup..."
+    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';"
   fi
+
 
   touch "$INIT_FLAG"
   echo "[INFO] Initialization complete."

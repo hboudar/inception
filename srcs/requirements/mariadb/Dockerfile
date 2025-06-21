@@ -8,8 +8,9 @@ RUN apt-get update && \
 EXPOSE 3306
 
 COPY tools/init-maria.sh .
-
-# At the end of Dockerfile
 RUN chown -R mysql:mysql /var/lib/mysql
+
+COPY tools/healthcheck.sh /usr/local/bin/healthcheck.sh
+RUN chmod +x /usr/local/bin/healthcheck.sh
 
 CMD ["bash", "./init-maria.sh"]

@@ -27,7 +27,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_HOST=${DB_HOST}
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-u", "root"]
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -97,27 +97,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  ftp:
-    build: requirements/bonus/FTP
-    image: ftp:inception
-    container_name: ftp
-    restart: unless-stopped
-    networks:
-      - my-net
-    ports:
-      - "2121:2121"
-      - "30000-30100:30000-30100"
-    volumes:
-      - wordpress_data:/var/www/html
-    environment:
-      - FTP_USER=${FTP_USER}
-    secrets:
-      - ftp_pass
-    healthcheck:
-      test: ["CMD", "bash", "-c", "echo quit | nc -w 2 localhost 2121 | grep '220'"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+
 
 
 
@@ -148,5 +128,5 @@ secrets:
     file: ./../secrets/user_pass.txt
   root_pass:
     file: ./../secrets/root_pass.txt
-  ftp_pass:
-    file: ./../secrets/ftp_pass.txt
+  # ftp_pass:
+  #   file: ./../secrets/ftp_pass.txt

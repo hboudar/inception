@@ -28,3 +28,4 @@ if [ "$CURRENT_OWNER" != "$FTP_USER" ]; then
 fi
 
 exec vsftpd /etc/vsftpd.conf
+

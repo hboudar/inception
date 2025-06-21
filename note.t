@@ -61,3 +61,5 @@ https://localhost:8443/wp-admin/edit.php
 
 
 why not using .env or args for passwords and using secrets?
+
+36

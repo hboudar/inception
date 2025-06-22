@@ -44,4 +44,4 @@ fdown: down
 	@docker volume prune -af
 	@docker image prune -af
 
-re: fdown up
+re: down up

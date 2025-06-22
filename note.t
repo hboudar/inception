@@ -56,10 +56,11 @@
   - Encryption: They enable the establishment of a secure, encrypted session (TLS handshake)/
 
 https://localhost:8443
-http://localhost:8080
 https://localhost:8443/wp-admin/edit.php
+http://localhost:8080
+ftp -p 127.0.0.1 2121
+
 
 
 why not using .env or args for passwords and using secrets?
-
-36
+the diff between : unless-stopped / always in .yml

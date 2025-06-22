@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 if [ -z "$FTP_USER" ]; then
   echo "FTP_USER environment variable not set"
@@ -27,5 +27,8 @@ if [ "$CURRENT_OWNER" != "$FTP_USER" ]; then
   chown -R "$FTP_USER:$FTP_USER" /var/www/html
 fi
 
-exec vsftpd /etc/vsftpd.conf
+CONTAINER_IP=$(hostname -I | awk '{print $1}')
+sed -i "s|^# pasv_address=.*|pasv_address=${CONTAINER_IP}|" /etc/vsftpd.conf
 
+echo "Starting vsftpd..."
+exec vsftpd /etc/vsftpd.conf

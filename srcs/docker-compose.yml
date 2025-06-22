@@ -97,6 +97,27 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  ftp:
+    build: ./requirements/bonus/FTP
+    container_name: ftp
+    restart: always
+    ports:
+      - "2121:2121"
+      - "30000-30100:30000-30100"
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    environment:
+      - FTP_USER=ftpuser
+    secrets:
+      - ftp_pass
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "2121"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
 
 
 
@@ -128,5 +149,5 @@ secrets:
     file: ./../secrets/user_pass.txt
   root_pass:
     file: ./../secrets/root_pass.txt
-  # ftp_pass:
-  #   file: ./../secrets/ftp_pass.txt
+  ftp_pass:
+    file: ./../secrets/ftp_pass.txt

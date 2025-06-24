@@ -64,3 +64,5 @@ ftp -p 127.0.0.1 2121
 
 why not using .env or args for passwords and using secrets?
 the diff between : unless-stopped / always in .yml
+
+earlier was facing : ftp service keeps resarting, after updating the health check not it does not do it that many times, but still it is not consistent, sometimes does it after 1h (which i think is good), and sometimes does it in less than 10 min

@@ -12,6 +12,12 @@ services:
       - wordpress_data:/var/www/html
     depends_on:
       - wordpress
+    healthcheck:
+      test: ["CMD-SHELL", "curl -kfs https://localhost || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
   mariadb:
     build: requirements/mariadb
@@ -64,6 +70,12 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep php-fpm7.4 > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
   # bonus part
   adminer:
@@ -98,6 +110,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   ftp:
     build: ./requirements/bonus/ftp
     image: ftp:inception
@@ -106,6 +119,8 @@ services:
     ports:
       - "2121:21"
       - "30000-30100:30000-30100"
+    networks:
+      - my-net
     depends_on:
       - wordpress
     volumes:
@@ -121,7 +136,31 @@ services:
       retries: 3
       start_period: 15s
 
+  static-site:
+    build: ./requirements/bonus/static-site
+    image: static-site:inception
+    container_name: static-site
+    ports:
+      - "8090:80"
+    networks:
+      - my-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
+  health-monitor:
+    build: ./requirements/bonus/health-monitor
+    image: health-monitor:inception
+    container_name: health-monitor
+    ports:
+      - "5000:5000"
+    networks:
+      - my-net
+    restart: unless-stopped
 
 
 volumes:

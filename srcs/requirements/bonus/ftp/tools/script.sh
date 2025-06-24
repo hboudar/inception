@@ -1,32 +1,34 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ -z "$FTP_USER" ]; then
-  echo "FTP_USER environment variable not set"
+# Validate environment and secrets
+if [ -z "${FTP_USER:-}" ]; then
+  echo "Error: FTP_USER environment variable not set" >&2
   exit 1
 fi
 
 if [ ! -f /run/secrets/ftp_pass ]; then
-  echo "FTP password secret file missing"
+  echo "Error: FTP password secret file missing" >&2
   exit 1
 fi
 
 FTP_PASS=$(cat /run/secrets/ftp_pass)
 
-# Create user only if doesn't exist
+# Create FTP user if it doesn't exist
 if ! id "$FTP_USER" &>/dev/null; then
   useradd -m -d /var/www/html -s /bin/bash "$FTP_USER"
   echo "${FTP_USER}:${FTP_PASS}" | chpasswd
 else
-  echo "User $FTP_USER already exists, skipping useradd"
+  echo "User $FTP_USER already exists, skipping creation"
 fi
 
-# Change ownership only if needed
+# Fix ownership of the WordPress directory if needed
 CURRENT_OWNER=$(stat -c '%U' /var/www/html)
 if [ "$CURRENT_OWNER" != "$FTP_USER" ]; then
   chown -R "$FTP_USER:$FTP_USER" /var/www/html
 fi
 
+# Dynamically set pasv_address to container's IP for passive FTP
 CONTAINER_IP=$(hostname -I | awk '{print $1}')
 sed -i "s|^# pasv_address=.*|pasv_address=${CONTAINER_IP}|" /etc/vsftpd.conf
 

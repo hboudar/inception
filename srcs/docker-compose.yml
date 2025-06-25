@@ -113,7 +113,7 @@ services:
     secrets:
       - ftp_pass
     healthcheck:
-      test: ["CMD-SHELL", "echo quit | nc 127.0.0.1 2121 | grep -q '220'"]
+      test: ["CMD-SHELL", "echo quit | nc 127.0.0.1 21 | grep -q '220'"]
       interval: 10s
       timeout: 5s
       retries: 3

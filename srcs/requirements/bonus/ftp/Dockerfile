@@ -1,23 +1,22 @@
 FROM debian:bullseye
 
-# Install only necessary packages
-RUN apt-get update && apt-get install -y \
+# Install only needed packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
     vsftpd netcat-openbsd \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Prepare vsftpd environment
-RUN mkdir -p /var/run/vsftpd/empty \
- && touch /var/log/vsftpd.log \
- && chmod 644 /var/log/vsftpd.log
+# Create necessary runtime dirs and logs
+RUN mkdir -p /var/run/vsftpd/empty && \
+    touch /var/log/vsftpd.log && \
+    chmod 644 /var/log/vsftpd.log
 
-# Copy configuration and script
+# Copy configs and init script
 COPY tools/script.sh /usr/local/bin/
 COPY conf/vsftpd.conf /etc/vsftpd.conf
 RUN chmod +x /usr/local/bin/script.sh
 
-# Passive FTP and command port
+# Expose control and passive ports
 EXPOSE 21 30000-30100
 
-# Startup
+# Start FTP service via script
 CMD ["/usr/local/bin/script.sh"]

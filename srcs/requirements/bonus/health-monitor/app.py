@@ -21,7 +21,9 @@ def health():
     services = {
         "wordpress": ("wordpress", 9000),
         "redis": ("redis", 6379),
-        "mariadb": ("mariadb", 3306)
+        "mariadb": ("mariadb", 3306),
+        "adminer": ("adminer", 8080),
+        "static-site": ("static-site", 80)
     }
 
     status = {name: check_port(host, port) for name, (host, port) in services.items()}

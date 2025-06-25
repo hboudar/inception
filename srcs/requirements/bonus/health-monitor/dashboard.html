@@ -4,32 +4,44 @@
   <meta charset="UTF-8" />
   <title>Service Health Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; }
-    .service { margin: 10px 0; }
+    body { font-family: Arial, sans-serif; padding: 1rem; background: #fafafa; }
+    h1 { margin-bottom: 1rem; }
+    #last-updated { font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
+    ul { list-style: none; padding: 0; }
+    li.service { margin: 8px 0; font-weight: bold; }
     .up { color: green; }
     .down { color: red; }
   </style>
 </head>
 <body>
   <h1>Service Health Dashboard :</h1>
-  <div id="status"></div>
+  <div id="last-updated"></div>
+  <ul id="status"></ul>
 
   <script>
     async function fetchHealth() {
       try {
         const res = await fetch('/health');
+        if (!res.ok) throw new Error('Network response was not ok');
         const data = await res.json();
+
         const container = document.getElementById('status');
         container.innerHTML = '';
+
         const services = data.services_status;
         for (const [name, isUp] of Object.entries(services)) {
-          const div = document.createElement('div');
-          div.className = 'service ' + (isUp ? 'up' : 'down');
-          div.textContent = `${name}: ${isUp ? 'UP' : 'DOWN'}`;
-          container.appendChild(div);
+          const li = document.createElement('li');
+          li.className = 'service ' + (isUp ? 'up' : 'down');
+          li.textContent = `${name}: ${isUp ? 'UP' : 'DOWN'}`;
+          container.appendChild(li);
         }
+
+        const lastUpdated = new Date().toLocaleTimeString();
+        document.getElementById('last-updated').textContent = `Last updated: ${lastUpdated}`;
       } catch (e) {
-        document.getElementById('status').textContent = 'Error fetching health data.';
+        const container = document.getElementById('status');
+        container.innerHTML = '<li class="down">Error fetching health data.</li>';
+        document.getElementById('last-updated').textContent = '';
       }
     }
 

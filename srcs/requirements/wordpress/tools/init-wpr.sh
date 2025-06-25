@@ -64,17 +64,38 @@ else
   echo "[INFO] WordPress already set up."
 fi
 
-# Set secure permissions (avoid 777 unless explicitly required)
-chown -R www-data:www-data /var/www/html
-chmod -R 755 /var/www/html
 
-# Ensure PHP-FPM socket binding was patched
+# Ensure shared group exists
+if ! getent group webgroup >/dev/null; then
+  groupadd -g 1000 webgroup
+fi
+
+# Add www-data to shared group (idempotent)
+if ! id -nG www-data | grep -qw webgroup; then
+  usermod -aG webgroup www-data
+fi
+
+# IMPORTANT: Add FTP user to the same group (if FTP user exists)
+if id ftpuser &>/dev/null; then
+  if ! id -nG ftpuser | grep -qw webgroup; then
+    usermod -aG webgroup ftpuser
+  fi
+fi
+
+# Set ownership and group recursively to www-data:webgroup
+chown -R www-data:webgroup /var/www/html
+
+# Set directory permissions with setgid bit to maintain group inheritance
+find /var/www/html -type d -exec chmod 2775 {} \;
+
+# Set file permissions to group writable
+find /var/www/html -type f -exec chmod 664 {} \;
+
+# Patch PHP-FPM if needed
 grep -q "listen = 0.0.0.0:9000" /etc/php/7.4/fpm/pool.d/www.conf || {
   echo "[INFO] Patching PHP-FPM config..."
   sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
 }
-
-mkdir -p /run/php
 
 echo "[INFO] Starting php-fpm..."
 exec php-fpm7.4 -F

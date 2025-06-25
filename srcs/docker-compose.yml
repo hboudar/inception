@@ -12,12 +12,6 @@ services:
       - wordpress_data:/var/www/html
     depends_on:
       - wordpress
-    healthcheck:
-      test: ["CMD-SHELL", "curl -kfs https://localhost || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
 
   mariadb:
     build: requirements/mariadb
@@ -32,14 +26,14 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_HOST=${DB_HOST}
-    healthcheck:
+    secrets:
+      - db_pass
+      - root_pass
+    healthcheck: #important
       test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
       interval: 10s
       timeout: 5s
       retries: 5
-    secrets:
-      - db_pass
-      - root_pass
 
   wordpress:
     build: requirements/wordpress
@@ -70,12 +64,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep php-fpm7.4 > /dev/null || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
 
   # bonus part
   adminer:
@@ -90,11 +78,6 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
   redis:
     build: ./requirements/bonus/Redis
@@ -105,11 +88,11 @@ services:
       - "6379"
     networks:
       - my-net
-    healthcheck:
+    healthcheck: #important
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 7
 
   ftp:
     build: ./requirements/bonus/ftp
@@ -130,7 +113,7 @@ services:
     secrets:
       - ftp_pass
     healthcheck:
-      test: ["CMD-SHELL", "echo quit | nc 127.0.0.1 21 | grep -q '220'"]
+      test: ["CMD-SHELL", "echo quit | nc 127.0.0.1 2121 | grep -q '220'"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -145,12 +128,6 @@ services:
     networks:
       - my-net
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
 
   health-monitor:
     build: ./requirements/bonus/health-monitor

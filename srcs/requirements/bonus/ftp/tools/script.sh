@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Validate environment variables
+# Validate required env
 if [ -z "${FTP_USER:-}" ]; then
   echo "Error: FTP_USER not set" >&2
   exit 1
@@ -14,26 +14,41 @@ fi
 
 FTP_PASS=$(< /run/secrets/ftp_pass)
 
-# Create ftp user if not exists
-if ! id "$FTP_USER" &>/dev/null; then
-  echo "Creating user $FTP_USER..."
-  useradd -m -d /var/www/html -s /bin/bash "$FTP_USER"
-  echo "${FTP_USER}:${FTP_PASS}" | chpasswd
-  usermod -aG www-data "$FTP_USER"  # Allow access to group-owned dirs
-else
-  echo "User $FTP_USER already exists"
+# Ensure shared group for WP and FTP exists
+if ! getent group webftp >/dev/null; then
+  groupadd -g 1000 webftp
 fi
 
-# Fix permissions recursively on first run
-echo "Fixing permissions under /var/www/html..."
-chown -R "$FTP_USER:www-data" /var/www/html
-find /var/www/html -type d -exec chmod 755 {} \;
-find /var/www/html -type f -exec chmod 644 {} \;
+usermod -aG webftp www-data || true
 
-# Dynamically set passive IP
-CONTAINER_IP=$(hostname -I | awk '{print $1}')
-sed -i "/^pasv_address=/d" /etc/vsftpd.conf
-echo "pasv_address=${CONTAINER_IP}" >> /etc/vsftpd.conf
+# === Create FTP user if not exists ===
+if ! id "$FTP_USER" &>/dev/null; then
+  useradd -u 1001 -d /var/www/html -s /bin/bash "$FTP_USER"
+  echo "${FTP_USER}:${FTP_PASS}" | chpasswd
+  usermod -aG webftp "$FTP_USER"
+fi
 
-echo "Starting vsftpd with IP $CONTAINER_IP..."
-exec vsftpd /etc/vsftpd.conf
+# Add FTP user and www-data to shared group (idempotent)
+if ! id -nG "$FTP_USER" | grep -qw webftp; then
+  usermod -aG webftp "$FTP_USER"
+fi
+
+
+# Adjust ownership/permissions safely
+chown -R "$FTP_USER":webftp /var/www/html
+chmod -R g+rwX /var/www/html
+find /var/www/html -type d -exec chmod 2775 {} \;
+find /var/www/html -type f -exec chmod 664 {} \;
+
+# Configure passive IP dynamically
+sed -i '/^pasv_address=/d' /etc/vsftpd.conf
+echo "pasv_address=${PASV_ADDRESS:-127.0.0.1}" >> /etc/vsftpd.conf
+
+# === Optional debug logs ===
+# echo "[INFO] FTP user: $FTP_USER"
+# id "$FTP_USER"
+# ls -ld /var/www/html
+
+umask 002
+# Run FTP server
+pgrep vsftpd > /dev/null || exec vsftpd /etc/vsftpd.conf

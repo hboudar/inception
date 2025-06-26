@@ -55,6 +55,7 @@ services:
       - USER_NAME=${USER_NAME}
       - USER_EMAIL=${USER_EMAIL}
       - REDIS_HOST=${REDIS_HOST}
+      - FTP_USER=${FTP_USER}
     secrets:
       - db_pass
       - admin_pass
@@ -109,7 +110,7 @@ services:
     volumes:
       - wordpress_data:/var/www/html
     environment:
-      - FTP_USER=ftpuser
+      - FTP_USER=${FTP_USER}
     secrets:
       - ftp_pass
     healthcheck:

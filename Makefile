@@ -39,7 +39,7 @@ down:
 
 fdown: down
 	@docker run --rm -v $(DATA_DIR):/trash alpine sh -c "rm -rf /trash/*"
-	@mkdir rm -rf $(WORDPRESS_DIR) $(MARIADB_DIR)
+	@rm -rf $(WORDPRESS_DIR) $(MARIADB_DIR)
 	@docker network rm -f my-net
 	@docker volume prune -af
 	@docker image prune -af

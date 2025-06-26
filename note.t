@@ -64,12 +64,3 @@ ftp -p 127.0.0.1 2121
 
 why not using .env or args for passwords and using secrets?
 the diff between : unless-stopped / always in .yml
-
-
-
-
-docker exec -u ftpuser ftp bash -c 'echo "ftp test content" > /var/www/html/test_ftp_create.txt'
-docker exec wordpress ls -l /var/www/html/test_ftp_create.txt
-docker exec wordpress stat /var/www/html/test_ftp_create.txt
-docker exec -u www-data wordpress bash -c 'echo "append from wp" >> /var/www/html/test_ftp_create.txt' || echo "WP cannot append"
-docker exec -u ftpuser ftp bash -c 'cat /var/www/html/test_ftp_create.txt'

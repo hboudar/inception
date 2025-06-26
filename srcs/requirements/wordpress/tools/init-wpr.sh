@@ -75,13 +75,14 @@ id -nG "$FTP_USER" | grep -qw webgroup || usermod -aG webgroup "$FTP_USER" # Ens
 
 umask 0002
 chown -R www-data:webgroup /var/www/html
-find /var/www/html -type d -exec chmod 2775 {} \;
-find /var/www/html -type f -exec chmod 664 {} \;
+find /var/www/html -type d -exec chmod g+rwxs {} \;
+find /var/www/html -type f -exec chmod g+rw {} \;
 
-grep -q "listen = 0.0.0.0:9000" /etc/php/7.4/fpm/pool.d/www.conf || {
-  echo "[INFO] Patching PHP-FPM config..."
+grep -q "listen = 0.0.0.0:9000" /etc/php/7.4/fpm/pool.d/www.conf || \
   sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
-}
+
+# Redirect logs to stderr
+sed -i 's|^error_log = .*|error_log = /proc/self/fd/2|' /etc/php/7.4/fpm/php-fpm.conf
 
 echo "[INFO] Starting php-fpm..."
 exec php-fpm7.4 -F

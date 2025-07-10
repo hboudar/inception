@@ -64,6 +64,3 @@ ftp -p 127.0.0.1 2121
 
 why not using .env or args for passwords and using secrets?
 the diff between : unless-stopped / always in .yml
-
-
-Omah Lay - Holy Ghost 🇳🇬

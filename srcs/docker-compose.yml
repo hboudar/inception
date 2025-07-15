@@ -5,7 +5,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - "8443:443"
+      - "443:443"
     networks:
       - my-net
     volumes:
@@ -29,7 +29,7 @@ services:
     secrets:
       - db_pass
       - root_pass
-    healthcheck: #important
+    healthcheck:
       test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh"]
       interval: 10s
       timeout: 5s
@@ -89,7 +89,7 @@ services:
       - "6379"
     networks:
       - my-net
-    healthcheck: #important
+    healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
@@ -113,12 +113,6 @@ services:
       - FTP_USER=${FTP_USER}
     secrets:
       - ftp_pass
-    healthcheck:
-      test: ["CMD-SHELL", "echo quit | nc 127.0.0.1 21 | grep -q '220'"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
 
   static-site:
     build: ./requirements/bonus/static-site

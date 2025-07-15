@@ -25,7 +25,6 @@ working_dirs:
 			echo -e "$(RED)Recreating directories...$(NC)"; \
 			( docker run --rm -v $(DATA_DIR):/trash alpine sh -c "rm -rf /trash/*" >/dev/null 2>&1 ); \
 			( mkdir -p $(WORDPRESS_DIR) $(MARIADB_DIR) >/dev/null 2>&1 ); \
-
 		else \
 			echo -e "$(GREEN)Keeping existing directories.$(NC)"; \
 		fi; \
@@ -40,8 +39,8 @@ down:
 fdown: down
 	@docker run --rm -v $(DATA_DIR):/trash alpine sh -c "rm -rf /trash/*"
 	@rm -rf $(WORDPRESS_DIR) $(MARIADB_DIR)
-	@docker network rm -f my-net
-	@docker volume prune -af
 	@docker image prune -af
+	@docker network rm my-net
+	@docker volume prune -af
 
 re: down up

@@ -55,8 +55,8 @@
   - Authentication: They prove the server's identity to the client
   - Encryption: They enable the establishment of a secure, encrypted session (TLS handshake)/
 
-https://localhost:8443
-https://localhost:8443/wp-admin/edit.php
+https://localhost:443
+https://localhost:443/wp-admin/edit.php
 http://localhost:8080
 ftp -p 127.0.0.1 2121
 

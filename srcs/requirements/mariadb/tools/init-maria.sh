@@ -1,47 +1,43 @@
 #!/bin/bash
 set -euo pipefail
+trap 'echo "[ERROR] Script failed at line $LINENO"' ERR
 
-# Constants
 INIT_FLAG="/var/lib/mysql/.inception_initialized"
+SOCKET="/run/mysqld/mysqld.sock"
 
-# Start MariaDB in background
-mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql' &
+echo "[INFO] Checking if database directory is empty..."
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "[INFO] Running mysql_install_db to initialize system tables..."
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql
+fi
+
 echo "[INFO] Starting MariaDB..."
+mysqld_safe --datadir='/var/lib/mysql' --socket=${SOCKET} --port=3306 --bind-address=0.0.0.0 &
+pid="$!"
 
-# Wait for MariaDB to become responsive
-until mysqladmin ping --silent --connect-timeout=2 > /dev/null; do
-  echo "[INFO] Waiting for MariaDB to be ready..."
-  sleep 1.5
+echo "[INFO] Waiting for MariaDB to become ready..."
+until mysqladmin ping --protocol=socket --socket=${SOCKET} --silent; do
+    sleep 1
 done
 echo "[INFO] MariaDB is ready."
 
-# Read secrets
-DB_PASS=$(cat /run/secrets/db_pass)
-ROOT_PASS=$(cat /run/secrets/root_pass)
+DB_PASS=$(< /run/secrets/db_pass)
+ROOT_PASS=$(< /run/secrets/root_pass)
 
-# Only initialize if flag doesn't exist
 if [ ! -f "$INIT_FLAG" ]; then
-  echo "[INFO] Performing one-time DB initialization..."
-
-  mysql <<-EOSQL
-    CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;
-    CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';
-    GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
-    FLUSH PRIVILEGES;
+    echo "[INFO] Running first‑time DB initialization..."
+    mysql --protocol=socket --socket=${SOCKET} <<-EOSQL
+        CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;
+        CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';
+        GRANT ALL PRIVILEGES ON \`$DB_NAME\`.* TO '$DB_USER'@'%';
+        ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';
+        FLUSH PRIVILEGES;
 EOSQL
-
-  # Set root password (may fail if already set, warn only)
-  if ! mysql -uroot -e "SELECT 1;" >/dev/null 2>&1; then
-    echo "[INFO] Attempting root password setup..."
-    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';"
-  fi
-
-
-  touch "$INIT_FLAG"
-  echo "[INFO] Initialization complete."
+    touch "$INIT_FLAG"
+    echo "[INFO] Database initialization complete."
 else
-  echo "[INFO] Skipping DB setup — already initialized."
+    echo "[INFO] Skipping DB setup — already initialized."
 fi
 
-# Keep the container alive
-wait
+echo "[INFO] MariaDB started and ready. Handing over to foreground process..."
+wait "$pid"

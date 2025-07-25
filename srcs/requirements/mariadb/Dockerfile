@@ -7,10 +7,12 @@ RUN apt-get update && \
 
 EXPOSE 3306
 
-COPY tools/init-maria.sh .
-RUN chown -R mysql:mysql /var/lib/mysql
+RUN mkdir -p /run/mysqld && chown mysql:mysql /run/mysqld
 
+COPY tools/init-maria.sh .
 COPY tools/healthcheck.sh /usr/local/bin/healthcheck.sh
+
+RUN chown -R mysql:mysql /var/lib/mysql
 RUN chmod +x /usr/local/bin/healthcheck.sh
 
-CMD ["bash", "./init-maria.sh"]
+CMD ["./init-maria.sh"]

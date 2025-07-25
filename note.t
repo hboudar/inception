@@ -64,3 +64,19 @@ ftp -p 127.0.0.1 2121
 
 why not using .env or args for passwords and using secrets?
 the diff between : unless-stopped / always in .yml
+
+
+-----------------
+NOTE: Read about PID 1 and the best practices for writing Dockerfiles.
+
+NOTE: A Docker container is not a virtual machine. Thus, it is not
+recommended to use any hacky patches based on ’tail -f’ and similar
+methods when trying to run it. Read about how daemons work and
+whether it’s a good idea to use them or not.
+
+
+REQUIREMENT: To simplify the process, you must configure your domain name to point to your local
+IP address.
+This domain name must be login.42.fr. Again, you must use your own login.
+For example, if your login is ’wil’, wil.42.fr will redirect to the IP address pointing to
+Wil’s website.

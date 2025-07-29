@@ -80,3 +80,35 @@ IP address.
 This domain name must be login.42.fr. Again, you must use your own login.
 For example, if your login is ’wil’, wil.42.fr will redirect to the IP address pointing to
 Wil’s website.
+
+
+
+
+i ve been running around f rassi ghi sm7oli ila nssit
+
+
+
+________________________________________________________________________________________________________
+# DOCKER : 
+A tool designed to build, deploy and run applications using containers,
+in an isolated environment, across different operating systems and platforms.
+
+# CONTAINERS :
+lightweight virtualized unit that package up code, dependencies, libraries and configurations
+needed to run an application, ensuring consistency across different environments.
+
+# DIFF BETWEEN CONTAINERS AND VIRTUAL MACHINES :
+containers virtualize the operating system, while VM virtualize the hardware.
+
+# IMAGES :
+read-only templates used to create containers, containing the application code, libraries, dependencies,
+
+# DOCKERFILE :
+a text file that contains a set of instructions to build a Docker image,
+
+# DOCKER COMPOSE :
+A tool designed to define and run multi-container Docker applications
+three important parts:
+1. Services: Define the different containers that make up the application.
+2. Networks: Define how the containers communicate with each other.
+3. Volumes: Define persistent data for the containers.

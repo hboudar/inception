@@ -126,3 +126,11 @@ final notes :
 #1 Makefile :
   remove the SHELL := /bin/bash (?)
   remove alpine method (?)
+# theory : scripts, used for?, network, volumes
+
+#wordpress
+how to edit a page and verify on the website that the page has been updated.
+
+#mariadb
+how to login into the database.
+how to verify the database is not empty.

@@ -112,3 +112,17 @@ three important parts:
 1. Services: Define the different containers that make up the application.
 2. Networks: Define how the containers communicate with each other.
 3. Volumes: Define persistent data for the containers.
+
+# PID 1 :
+Is the idnetifier of the init process, which is the first process started when the system boots up.
+-It is responsible for starting and stoping the application running in the container.
+(pid 1 in a docker container behave differently from the init process in a normal Unix-based system. (they are not the same))
+
+
+
+
+final notes : 
+
+#1 Makefile :
+  remove the SHELL := /bin/bash (?)
+  remove alpine method (?)

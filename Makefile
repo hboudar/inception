@@ -44,3 +44,4 @@ fdown: down
 	@docker volume prune -af
 
 re: down up
+.PHONY: up down fdown re working_dirs

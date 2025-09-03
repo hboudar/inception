@@ -11,21 +11,22 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
 fi
 
-echo "[INFO] Starting MariaDB..."
-mysqld_safe --datadir='/var/lib/mysql' --socket=${SOCKET} --port=3306 --bind-address=0.0.0.0 &
-pid="$!"
-
-echo "[INFO] Waiting for MariaDB to become ready..."
-until mysqladmin ping --protocol=socket --socket=${SOCKET} --silent; do
-    sleep 1
-done
-echo "[INFO] MariaDB is ready."
-
 DB_PASS=$(< /run/secrets/db_pass)
 ROOT_PASS=$(< /run/secrets/root_pass)
 
 if [ ! -f "$INIT_FLAG" ]; then
-    echo "[INFO] Running first‑time DB initialization..."
+    echo "[INFO] Running first-time DB initialization..."
+
+    # Start temporary MariaDB instance
+    mysqld_safe --datadir='/var/lib/mysql' --socket=${SOCKET} --skip-networking &
+    temp_pid=$!
+
+    echo "[INFO] Waiting for MariaDB (init) to become ready..."
+    until mysqladmin ping --protocol=socket --socket=${SOCKET} --silent; do
+        sleep 1
+    done
+
+    # Run init SQL
     mysql --protocol=socket --socket=${SOCKET} <<-EOSQL
         CREATE DATABASE IF NOT EXISTS \`$DB_NAME\`;
         CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';
@@ -33,11 +34,18 @@ if [ ! -f "$INIT_FLAG" ]; then
         ALTER USER 'root'@'localhost' IDENTIFIED BY '$ROOT_PASS';
         FLUSH PRIVILEGES;
 EOSQL
+
+    # Mark initialization done
     touch "$INIT_FLAG"
+
+    echo "[INFO] Shutting down temporary MariaDB..."
+    mysqladmin --protocol=socket --socket=${SOCKET} -uroot -p"$ROOT_PASS" shutdown
+
+    wait "$temp_pid"
     echo "[INFO] Database initialization complete."
 else
     echo "[INFO] Skipping DB setup — already initialized."
 fi
 
-echo "[INFO] MariaDB started and ready. Handing over to foreground process..."
-wait "$pid"
+echo "[INFO] Starting MariaDB in foreground..."
+exec mysqld_safe --datadir='/var/lib/mysql' --socket=${SOCKET} --port=3306 --bind-address=0.0.0.0

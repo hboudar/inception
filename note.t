@@ -123,6 +123,8 @@ Is the idnetifier of the init process, which is the first process started when t
 
 final notes : 
 
+#0 Theory : more about concepts like : docker,docker compos, pid1...
+
 #1 Makefile :
   remove the SHELL := /bin/bash (?)
   remove alpine method (?)

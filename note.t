@@ -74,20 +74,6 @@ recommended to use any hacky patches based on ’tail -f’ and similar
 methods when trying to run it. Read about how daemons work and
 whether it’s a good idea to use them or not.
 
-
-REQUIREMENT: To simplify the process, you must configure your domain name to point to your local
-IP address.
-This domain name must be login.42.fr. Again, you must use your own login.
-For example, if your login is ’wil’, wil.42.fr will redirect to the IP address pointing to
-Wil’s website.
-
-
-
-
-i ve been running around f rassi ghi sm7oli ila nssit
-
-
-
 ________________________________________________________________________________________________________
 # DOCKER : 
 A tool designed to build, deploy and run applications using containers,
@@ -136,3 +122,4 @@ how to edit a page and verify on the website that the page has been updated.
 #mariadb
 how to login into the database.
 how to verify the database is not empty.
+

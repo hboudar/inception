@@ -123,3 +123,4 @@ how to edit a page and verify on the website that the page has been updated.
 how to login into the database.
 how to verify the database is not empty.
 
+in mariadb : should i add 3306 in docker compose?

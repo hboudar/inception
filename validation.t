@@ -1,13 +1,10 @@
--theory concepts
--scripts logic of each container
+# Theory concepts
 
-
--Pid 1
 -Daemons
 -Diff between containers and vms
 
 
-/Docker/        : A tool designed to build, deloy and run applications using containers.
+/Docker/        : A tool designed to build, deploy and run applications using containers.
                   $Docker_Daemon(dockerd) : Background service that creates, runs, and manages containers.
                   $Dcoker_CLI(docker) : command-line interface you use to talk to the Daemon.
                   $Docker_API : HTTP API that the CLI or other tools use to control Docker.
@@ -43,8 +40,25 @@
                     {1} PID 1 has extra responsibilities (like reaping zombie processes).
                     {2} If PID 1 dies, the whole container stops.
 
-/Daemons/       : 
+/Daemons/       : A Background service process
+                    {start at boot, Run detached from terminal, provide services(networking, scheduling...)}
 
 
 /Docker-Compose/  : A tool for defining and running multi-container application
                       using a single YAMAL file (Services, networks, volumes)
+
+
+                    /Container                      VS                   Vm/
+isolation   : os-level(Namespaces, Cgroups)                     hardware-level(hypervisor)
+kernel      : shares host kernel                                has its own guest kernel
+startup time: milliseconds                                      minutes
+size        : MBs                                               GBs
+performance : Near-native                                       More overhead
+best for    : Microservices, portable applications              Full OS isoltaion, running different kernels
+
+key takeaway :
+{Containers} = lightweight, fast, app-focused.
+{VMs} = heavyweight, fully isolated, OS-focused.
+
+
+# Scripts logic of each container

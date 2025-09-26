@@ -75,22 +75,23 @@ methods when trying to run it. Read about how daemons work and
 whether it’s a good idea to use them or not.
 
 ________________________________________________________________________________________________________
-# DOCKER : 
+/*---------------------------------------------------------------------------*/
+# # DOCKER : 
 A tool designed to build, deploy and run applications using containers,
 in an isolated environment, across different operating systems and platforms.
 
-# CONTAINERS :
+# # CONTAINERS :
 lightweight virtualized unit that package up code, dependencies, libraries and configurations
 needed to run an application, ensuring consistency across different environments.
 
-# DIFF BETWEEN CONTAINERS AND VIRTUAL MACHINES :
-containers virtualize the operating system, while VM virtualize the hardware.
-
-# IMAGES :
+# # IMAGES :
 read-only templates used to create containers, containing the application code, libraries, dependencies,
 
-# DOCKERFILE :
+# # DOCKERFILE :
 a text file that contains a set of instructions to build a Docker image,
+
+# DIFF BETWEEN CONTAINERS AND VIRTUAL MACHINES :
+containers virtualize the operating system, while VM virtualize the hardware.
 
 # DOCKER COMPOSE :
 A tool designed to define and run multi-container Docker applications
@@ -98,6 +99,7 @@ three important parts:
 1. Services: Define the different containers that make up the application.
 2. Networks: Define how the containers communicate with each other.
 3. Volumes: Define persistent data for the containers.
+/*---------------------------------------------------------------------------*/
 
 # PID 1 :
 Is the idnetifier of the init process, which is the first process started when the system boots up.
@@ -108,8 +110,6 @@ Is the idnetifier of the init process, which is the first process started when t
 
 
 final notes : 
-
-#0 Theory : more about concepts like : docker,docker compos, pid1...
 
 #1 Makefile :
   remove the SHELL := /bin/bash (?)
@@ -124,3 +124,8 @@ how to login into the database.
 how to verify the database is not empty.
 
 in mariadb : should i add 3306 in docker compose?
+
+
+/1 inception/
+/2 trans/
+/3 port-folio/

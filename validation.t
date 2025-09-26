@@ -1,8 +1,5 @@
 # Theory concepts
 
--Daemons
--Diff between containers and vms
-
 
 /Docker/        : A tool designed to build, deploy and run applications using containers.
                   $Docker_Daemon(dockerd) : Background service that creates, runs, and manages containers.

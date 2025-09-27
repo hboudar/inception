@@ -1,9 +1,8 @@
 # Theory concepts
 
-
-/Docker/        : A tool designed to build, deploy and run applications using containers.
+/Docker/        : A platform designed to build, deploy and run applications using containers.
                   $Docker_Daemon(dockerd) : Background service that creates, runs, and manages containers.
-                  $Dcoker_CLI(docker) : command-line interface you use to talk to the Daemon.
+                  $Dcoker_CLI(docker) : command-line tool used to communicate with the Daemon.
                   $Docker_API : HTTP API that the CLI or other tools use to control Docker.
 
         {Docker} is not a VM, it shares the host OS kernel but isolates environments using Linux kernel features:

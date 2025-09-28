@@ -1,14 +1,15 @@
 # Theory concepts
 
 /Docker/        : A platform designed to build, deploy and run applications using containers.
-                  $Docker_Daemon(dockerd) : Background service that creates, runs, and manages containers.
-                  $Dcoker_CLI(docker) : command-line tool used to communicate with the Daemon.
+                  $Docker_Daemon(dockerd) : Background service that manages images, container lifecycle(create, start, stop, delete).
+                  $Container_Runtime : Low-level component that actually perfoms the OS-level work(launching containers).
+                  $Docker_CLI(docker) : command-line tool used to communicate with the Daemon via Docker_API.
                   $Docker_API : HTTP API that the CLI or other tools use to control Docker.
 
-        {Docker} is not a VM, it shares the host OS kernel but isolates environments using Linux kernel features:
-          Namespaces: give each container its own "view" of the system(cpu, network, files)
-          Cgroups(control group): control how much cpu, memory, and disk each container can use. 
-          Union filesystems:  stack multiple read-only image layers with a writable container layer on top.
+          {Docker_container} is not a VM, it shares the host OS kernel but isolates environments using Linux kernel features:
+            Namespaces: give each container its own "view" of the system(cpu, network, files)
+            Cgroups(control group): control how much cpu, memory, and disk each container can use.
+            Union filesystems: stack multiple read-only image layers with a writable container layer on top.
 
 
 /Docker image/  : {1} A read-only blueprint of an application,

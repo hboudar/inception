@@ -48,14 +48,7 @@
                     /Container                      VS                   Vm/
 isolation   : os-level(Namespaces, Cgroups)                     hardware-level(hypervisor)
 kernel      : shares host kernel                                has its own guest kernel
-startup time: milliseconds                                      minutes
-size        : MBs                                               GBs
-performance : Near-native                                       More overhead
-best for    : Microservices, portable applications              Full OS isoltaion, running different kernels
 
 key takeaway :
 {Containers} = lightweight, fast, app-focused.
 {VMs} = heavyweight, fully isolated, OS-focused.
-
-
-# Scripts logic of each container

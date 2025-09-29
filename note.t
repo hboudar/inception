@@ -116,6 +116,9 @@ final notes :
   remove alpine method (?)
 # theory : scripts, used for?, network, volumes
 
+#nginix :
+should i leave curl
+
 #wordpress
 how to edit a page and verify on the website that the page has been updated.
 

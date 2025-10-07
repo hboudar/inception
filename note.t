@@ -43,11 +43,6 @@
 
 
 
-# MUST KNOW / HANDLE + INFO #
-  • Read about how daemons work and whether it is a good idea to use them or not
-  • The network line must be presented in .yml file.
-  • Read about PID 1
-
   /• For obvious security reasons, any credentials, API keys, passwords, etc... must be saved locally in various ways
   files and ignored by git. Publicly stored credentials will lead you directly to a failure of the project./ #done
 
@@ -61,74 +56,11 @@ http://localhost:8080
 ftp -p 127.0.0.1 2121
 
 
-
-why not using .env or args for passwords and using secrets?
-the diff between : unless-stopped / always in .yml
-
-
------------------
-NOTE: Read about PID 1 and the best practices for writing Dockerfiles.
-
-NOTE: A Docker container is not a virtual machine. Thus, it is not
-recommended to use any hacky patches based on ’tail -f’ and similar
-methods when trying to run it. Read about how daemons work and
-whether it’s a good idea to use them or not.
-
-________________________________________________________________________________________________________
-/*---------------------------------------------------------------------------*/
-# # DOCKER : 
-A tool designed to build, deploy and run applications using containers,
-in an isolated environment, across different operating systems and platforms.
-
-# # CONTAINERS :
-lightweight virtualized unit that package up code, dependencies, libraries and configurations
-needed to run an application, ensuring consistency across different environments.
-
-# # IMAGES :
-read-only templates used to create containers, containing the application code, libraries, dependencies,
-
-# # DOCKERFILE :
-a text file that contains a set of instructions to build a Docker image,
-
-# DIFF BETWEEN CONTAINERS AND VIRTUAL MACHINES :
-containers virtualize the operating system, while VM virtualize the hardware.
-
-# DOCKER COMPOSE :
-A tool designed to define and run multi-container Docker applications
-three important parts:
-1. Services: Define the different containers that make up the application.
-2. Networks: Define how the containers communicate with each other.
-3. Volumes: Define persistent data for the containers.
-/*---------------------------------------------------------------------------*/
-
-# PID 1 :
-Is the idnetifier of the init process, which is the first process started when the system boots up.
--It is responsible for starting and stoping the application running in the container.
-(pid 1 in a docker container behave differently from the init process in a normal Unix-based system. (they are not the same))
-
-
-
-
-final notes : 
-
-#1 Makefile :
-  remove the SHELL := /bin/bash (?)
-  remove alpine method (?)
-# theory : scripts, used for?, network, volumes
-
-#nginix :
-should i leave curl
-
+_______________________________________________________________________________________________________
+final notes :
 #wordpress
 how to edit a page and verify on the website that the page has been updated.
 
 #mariadb
 how to login into the database.
 how to verify the database is not empty.
-
-in mariadb : should i add 3306 in docker compose?
-
-
-/1 inception/
-/2 trans/
-/3 port-folio/

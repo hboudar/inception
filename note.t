@@ -49,18 +49,4 @@
   /•Certificates serve two fundamental purposes:
   - Authentication: They prove the server's identity to the client
   - Encryption: They enable the establishment of a secure, encrypted session (TLS handshake)/
-
-https://localhost:443
-https://localhost:443/wp-admin/edit.php
-http://localhost:8080
-ftp -p 127.0.0.1 2121
-
-
 _______________________________________________________________________________________________________
-final notes :
-#wordpress
-how to edit a page and verify on the website that the page has been updated.
-
-#mariadb
-how to login into the database.
-how to verify the database is not empty.

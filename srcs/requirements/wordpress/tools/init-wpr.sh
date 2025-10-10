@@ -26,6 +26,7 @@ fi
 DB_PASS=$(< /run/secrets/db_pass)
 ADMIN_PASS=$(< /run/secrets/admin_pass)
 USER_PASS=$(< /run/secrets/user_pass)
+FORBIDDEN_PATTERN='admin|administrator'
 
 # WordPress setup if not yet configured
 if [ ! -f wp-config.php ]; then
@@ -42,6 +43,12 @@ if [ ! -f wp-config.php ]; then
     --dbhost="$DB_HOST" \
     --allow-root \
     --skip-check
+
+  # Check admin name validity
+  if echo "$ADMIN_USER" | grep -qiE "$FORBIDDEN_PATTERN"; then
+      echo "[WARNING] Invalid admin username '$ADMIN_USER'. Using fallback 'supervisor42'."
+      ADMIN_USER="supervisor42"
+  fi
 
   # Install WordPress site
   wp core install \

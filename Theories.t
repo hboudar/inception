@@ -43,12 +43,3 @@
 
 /Docker-Compose/  : A tool for defining and running multi-container application
                       using a single YAMAL file (Services, networks, volumes)
-
-
-                    /Container                      VS                   Vm/
-isolation   : os-level(Namespaces, Cgroups)                     hardware-level(hypervisor)
-kernel      : shares host kernel                                has its own guest kernel
-
-key takeaway :
-{Containers} = lightweight, fast, app-focused.
-{VMs} = heavyweight, fully isolated, OS-focused.

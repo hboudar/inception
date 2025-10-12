@@ -1,20 +1,16 @@
 #!/bin/bash
 
-# Safe mode: exit on errors or undefined vars
 set -euo pipefail
 trap 'echo "[ERROR] Script failed at line $LINENO"' ERR
 
-# Wait for MariaDB to be ready
 echo "[INFO] Waiting for $DB_HOST..."
 until mysqladmin ping -h "$DB_HOST" --silent; do
   sleep 2
 done
 echo "[INFO] MariaDB is available."
 
-# Set working directory to WordPress root (volume)
 cd /var/www/html
 
-# Install WP-CLI if not already installed
 if ! command -v wp >/dev/null 2>&1; then
   echo "[INFO] Installing WP-CLI..."
   curl -sSLO https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -22,17 +18,14 @@ if ! command -v wp >/dev/null 2>&1; then
   mv wp-cli.phar /usr/local/bin/wp
 fi
 
-# Load passwords from Docker secrets
 DB_PASS=$(< /run/secrets/db_pass)
 ADMIN_PASS=$(< /run/secrets/admin_pass)
 USER_PASS=$(< /run/secrets/user_pass)
 FORBIDDEN_PATTERN='admin|administrator'
 
-# WordPress setup if not yet configured
 if [ ! -f wp-config.php ]; then
   echo "[INFO] Setting up WordPress..."
 
-  # Download core WordPress files
   wp core download --allow-root
 
   # Create wp-config.php with DB credentials
@@ -44,7 +37,6 @@ if [ ! -f wp-config.php ]; then
     --allow-root \
     --skip-check
 
-  # Check admin name validity
   if echo "$ADMIN_USER" | grep -qiE "$FORBIDDEN_PATTERN"; then
       echo "[WARNING] Invalid admin username '$ADMIN_USER'. Using fallback 'supervisor42'."
       ADMIN_USER="supervisor42"

@@ -17,7 +17,7 @@ ROOT_PASS=$(< /run/secrets/root_pass)
 if [ ! -f "$INIT_FLAG" ]; then
     echo "[INFO] Running first-time DB initialization..."
 
-    # Start temporary MariaDB instance
+    echo "[INFO] Starting a Temporary Mariadb..."
     mysqld_safe --datadir='/var/lib/mysql' --socket=${SOCKET} --skip-networking &
     temp_pid=$!
 
@@ -38,7 +38,7 @@ EOSQL
     # Mark initialization done
     touch "$INIT_FLAG"
 
-    echo "[INFO] Shutting down temporary MariaDB..."
+    echo "[INFO] Shutting down Temporary MariaDB..."
     mysqladmin --protocol=socket --socket=${SOCKET} -uroot -p"$ROOT_PASS" shutdown
 
     wait "$temp_pid"

@@ -8,13 +8,13 @@ RUN apt-get update && apt-get install -y \
     php7.4-mbstring \
     mariadb-client \
     curl \
-    wget \
     unzip \
     && apt-get clean
 
 RUN sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
 
-RUN mkdir -p /var/www/html
+RUN mkdir -p /var/www/html 
+
 RUN mkdir -p /run/php
 
 

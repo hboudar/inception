@@ -35,7 +35,7 @@ if [ ! -f wp-config.php ]; then
     --dbpass="$DB_PASS" \
     --dbhost="$DB_HOST" \
     --allow-root \
-    --skip-check
+    --skip-check #dont check the database connection yet.
 
   if echo "$ADMIN_USER" | grep -qiE "$FORBIDDEN_PATTERN"; then
       echo "[WARNING] Invalid admin username '$ADMIN_USER'. Using fallback 'supervisor42'."
@@ -72,23 +72,19 @@ else
   echo "[INFO] WordPress already set up."
 fi
 
-getent group webgroup >/dev/null || groupadd -g 1000 webgroup # Create shared group if it doesn't exist
-id -nG www-data | grep -qw webgroup || usermod -aG webgroup www-data # Add www-data to group if needed
-getent passwd "$FTP_USER" >/dev/null || useradd -u 1001 -g webgroup -M -N "$FTP_USER" # Create FTP user if not exists
-id -nG "$FTP_USER" | grep -qw webgroup || usermod -aG webgroup "$FTP_USER" # Ensure FTP user is in the group
+getent group webgroup >/dev/null || groupadd -g 1000 webgroup
+id -nG www-data | grep -qw webgroup || usermod -aG webgroup www-data
 
-# Set file permissions for WordPress files
+getent passwd "$FTP_USER" >/dev/null || useradd -u 1001 -g webgroup -M -N "$FTP_USER"
+id -nG "$FTP_USER" | grep -qw webgroup || usermod -aG webgroup "$FTP_USER"
+
 umask 0002
 chown -R www-data:webgroup /var/www/html
 find /var/www/html -type d -exec chmod g+rwxs {} \;
 find /var/www/html -type f -exec chmod g+rw {} \;
 
-# Ensure PHP-FPM listens on TCP 9000
 grep -q "listen = 0.0.0.0:9000" /etc/php/7.4/fpm/pool.d/www.conf || \
   sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = 0.0.0.0:9000|' /etc/php/7.4/fpm/pool.d/www.conf
-
-# Redirect PHP-FPM logs to Docker stdout/stderr
-sed -i 's|^error_log = .*|error_log = /proc/self/fd/2|' /etc/php/7.4/fpm/php-fpm.conf
 
 # Start PHP-FPM in foreground (main container process)
 echo "[INFO] Starting php-fpm..."

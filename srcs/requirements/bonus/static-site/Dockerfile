@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-RUN apt-get update && apt-get install -y nginx curl && \
+RUN apt-get update && apt-get install -y nginx && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY ./html/ /var/www/html/

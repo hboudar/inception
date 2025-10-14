@@ -1,7 +1,7 @@
 FROM debian:bullseye
 
 RUN apt-get update && apt-get install -y \
-    nginx openssl curl \
+    nginx openssl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /etc/ssl/private /etc/ssl/certs
